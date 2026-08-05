@@ -5,11 +5,11 @@ Handles material alias resolution, thickness formatting, and Victory Process com
 
 from typing import Dict, Any
 
-# Supported deposition model map
+# Supported deposition model map aligned with Victory Process syntax
 DEPOSIT_MODEL_MAP: Dict[str, str] = {
     "Conformal (ALD/CVD)": "CONFORMAL",
-    "Anisotropic (Evaporation)": "ANISOTROPIC",
-    "Sputter (PVD)": "SPUTTER"
+    "Directional (Evaporation)": "DIRECTIONAL",
+    "Isotropic": "ISOTROPIC"
 }
 
 # Material Alias Standardization
@@ -40,13 +40,12 @@ def normalize_material(name: str) -> str:
 def format_deposit_command(material: str, thickness: float, model: str = "CONFORMAL") -> str:
     """
     Formats a valid Victory Process DEPOSIT statement.
-    Always includes a deposition model flag (defaults to CONFORMAL) to prevent simulator syntax errors.
+    Valid model keywords: CONFORMAL, DIRECTIONAL, ISOTROPIC.
     """
     norm_mat = normalize_material(material)
     
-    # Map friendly UI names to Silvaco keywords if passed from GUI
     sim_model = DEPOSIT_MODEL_MAP.get(model, model.upper())
-    if sim_model not in ["CONFORMAL", "ANISOTROPIC", "SPUTTER"]:
+    if sim_model not in ["CONFORMAL", "DIRECTIONAL", "ISOTROPIC"]:
         sim_model = "CONFORMAL"
         
     return f'DEPOSIT MATERIAL="{norm_mat}" THICK={thickness:.2f} {sim_model}'
