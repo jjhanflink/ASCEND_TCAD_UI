@@ -59,10 +59,10 @@ layers = []
 has_resist = False
 
 default_stack = [
-    {"mat": "SiO2", "thick": 0.5, "model": "Conformal (ALD/CVD)"},
-    {"mat": "Photoresist", "thick": 1.2, "model": "Conformal (ALD/CVD)"},
-    {"mat": "Aluminum", "thick": 1.0, "model": "Conformal (ALD/CVD)"},
-    {"mat": "Copper", "thick": 1.5, "model": "Conformal (ALD/CVD)"}
+    {"mat": "SiO2", "thick": 0.5},
+    {"mat": "Photoresist", "thick": 1.2},
+    {"mat": "Aluminum", "thick": 1.0},
+    {"mat": "Copper", "thick": 1.5}
 ]
 
 for i in range(st.session_state.layer_count):
@@ -71,7 +71,6 @@ for i in range(st.session_state.layer_count):
     
     def_mat = default_stack[i]["mat"] if i < len(default_stack) else "SiO2"
     def_thick = default_stack[i]["thick"] if i < len(default_stack) else 0.5
-    def_model = default_stack[i]["model"] if i < len(default_stack) else "Conformal (ALD/CVD)"
     
     with l_col1:
         mat = st.selectbox(
@@ -85,17 +84,11 @@ for i in range(st.session_state.layer_count):
     with l_col3:
         if mat == "Photoresist":
             has_resist = True
-            model = "MASK"
             st.info("Photoresist Step → Auto-generates MASK & STRIP steps")
         else:
-            model = st.selectbox(
-                f"Deposition Model ##{i}", 
-                ["Conformal (ALD/CVD)", "Directional (Evaporation)", "Isotropic"], 
-                index=["Conformal (ALD/CVD)", "Directional (Evaporation)", "Isotropic"].index(def_model) if def_model in ["Conformal (ALD/CVD)", "Directional (Evaporation)", "Isotropic"] else 0,
-                key=f"dep_model_{i}"
-            )
+            st.success("Deposition Mode: CONFORMAL (Standard Victory Process Model)")
             
-    layers.append({"material": mat, "thickness": thick, "model": model})
+    layers.append({"material": mat, "thickness": thick})
 
 st.divider()
 
@@ -129,12 +122,8 @@ if st.button("🚀 Build & Generate Simulation Package", type="primary"):
         if l['material'] == "Photoresist":
             script_lines.append(f'MASK "L#1" MATERIAL="resist" THICKNESS={l["thickness"]} REVERSE')
         else:
-            sim_flag = "CONFORMAL"
-            if "Directional" in l['model']:
-                sim_flag = "DIRECTIONAL"
-            elif "Isotropic" in l['model']:
-                sim_flag = "ISOTROPIC"
-            script_lines.append(f'DEPOSIT MATERIAL="{l["material"]}" THICK={l["thickness"]} {sim_flag}')
+            # CONFORMAL is the robust, universal model required by Victory Process
+            script_lines.append(f'DEPOSIT MATERIAL="{l["material"]}" THICK={l["thickness"]} CONFORMAL')
         script_lines.append("")
         step_num += 1
         
