@@ -90,8 +90,8 @@ for i in range(st.session_state.layer_count):
         else:
             model = st.selectbox(
                 f"Deposition Model ##{i}", 
-                ["Conformal (ALD/CVD)", "Anisotropic (Evaporation)", "Sputter (PVD)"], 
-                index=["Conformal (ALD/CVD)", "Anisotropic (Evaporation)", "Sputter (PVD)"].index(def_model),
+                ["Conformal (ALD/CVD)", "Directional (Evaporation)", "Isotropic"], 
+                index=["Conformal (ALD/CVD)", "Directional (Evaporation)", "Isotropic"].index(def_model) if def_model in ["Conformal (ALD/CVD)", "Directional (Evaporation)", "Isotropic"] else 0,
                 key=f"dep_model_{i}"
             )
             
@@ -102,7 +102,6 @@ st.divider()
 # Code Generation Logic
 if st.button("🚀 Build & Generate Simulation Package", type="primary"):
     
-    # 1. Generate AppTest.in
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     script_lines = [
         "##############################################################",
@@ -131,10 +130,10 @@ if st.button("🚀 Build & Generate Simulation Package", type="primary"):
             script_lines.append(f'MASK "L#1" MATERIAL="resist" THICKNESS={l["thickness"]} REVERSE')
         else:
             sim_flag = "CONFORMAL"
-            if "Anisotropic" in l['model']:
-                sim_flag = "ANISOTROPIC"
-            elif "Sputter" in l['model']:
-                sim_flag = "SPUTTER"
+            if "Directional" in l['model']:
+                sim_flag = "DIRECTIONAL"
+            elif "Isotropic" in l['model']:
+                sim_flag = "ISOTROPIC"
             script_lines.append(f'DEPOSIT MATERIAL="{l["material"]}" THICK={l["thickness"]} {sim_flag}')
         script_lines.append("")
         step_num += 1
@@ -153,7 +152,6 @@ if st.button("🚀 Build & Generate Simulation Package", type="primary"):
     
     full_script = "\n".join(script_lines)
     
-    # Render Generated Code Output
     st.success("Simulation files generated successfully!")
     st.subheader(f"Generated `{project_name}.in` Script")
     st.code(full_script, language="bash")
