@@ -23,7 +23,7 @@ st.set_page_config(
 )
 
 st.title("⚡ ASCEND TCAD Automation Tool")
-st.markdown(f"**Silvaco Victory Process Script Generator v{ASCEND_VERSION}** — NC State University ECE Dept / LEADS Research Group[cite: 1, 2, 8]")
+st.markdown(f"**Silvaco Victory Process Script Generator v{ASCEND_VERSION}** — NC State University ECE Dept / LEADS Research Group")
 st.markdown("---")
 
 # ── Session State Initialization for Dynamic Layers ───────────────────────────
@@ -65,7 +65,7 @@ with st.sidebar.expander("4. Simulation Solver Settings", expanded=False):
 
 # ── Main Area: Process Stack Management ───────────────────────────────────────
 st.subheader("Process Stack Architecture")
-st.markdown("Configure deposition, masking, and etch steps in sequential order[cite: 6].")
+st.markdown("Configure deposition, masking, and etch steps in sequential order.")
 
 available_materials = sorted(list(MATERIAL_DB.keys()))
 
@@ -180,7 +180,7 @@ with tab2:
 
 with tab3:
     st.subheader("Download Simulation Package")
-    st.markdown("Generate and download a complete archive containing the `.in` script, `config.json`, and run summary for server deployment[cite: 9].")
+    st.markdown("Generate and download a complete archive containing the `.in` script, `config.json`, and run summary for server deployment.")
 
     if config_valid:
         if st.button("Build & Package Simulation Run"):
@@ -212,6 +212,6 @@ with tab3:
                     file_name=f"{config.project_name}_run_package.zip",
                     mime="application/zip",
                 )
-                st.success("Package built successfully. Ready for download and server transfer[cite: 9].")
+                st.success("Package built successfully. Ready for download and server transfer.")
     else:
         st.warning("Resolve syntax errors before generating export packages.")
